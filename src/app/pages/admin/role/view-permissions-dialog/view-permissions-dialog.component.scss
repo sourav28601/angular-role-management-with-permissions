@@ -1,0 +1,48 @@
+
+::ng-deep .mat-dialog-actions {
+    justify-content: flex-end;
+    min-height: 0px;
+}
+::ng-deep .mat-dialog-container {
+    width: 100%;
+    border-radius: 20px;
+
+}
+.product-name h5 {
+    margin-top: 30px;
+}
+.product-table thead tr td {
+    padding: 5px 11px 2px 18px;
+    border: 1px solid #e2e2e2;
+    text-transform: lowercase;
+}
+.product-table {
+    margin-top: 25px;
+}
+::ng-deep .popup .mat-dialog-actions i.fa.fa-window-close {
+    cursor: pointer;
+}
+::ng-deep .popup .mat-dialog-actions i.fa.fa-window-close:hover {
+    color: red;
+}
+::ng-deep h1.mat-dialog-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 0px;
+}
+::ng-deep .product-table thead td:first-child {
+    background-color: #eee !important;
+    text-transform: capitalize !important;
+    line-height: 33px !important;
+}
+::ng-deep .mat-dialog-container .role-popup {
+    background: white;
+    padding: 30px 40px;
+    width: 560px;
+    border-radius: 30px;
+}
+::ng-deep .mat-dialog-container{
+    background: transparent;
+    box-shadow: none;
+    padding: 0 27px;
+}

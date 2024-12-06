@@ -1,0 +1,83 @@
+table {
+    width: 100%;
+  }
+  
+  .btn-pri {
+    padding: 0.4rem 1rem;
+    font-weight: 600;
+  }
+  
+  button.btn.btn-link {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0;
+  }
+  
+  .Advanced-Attribute .card .card-header button.btn.btn-link {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0;
+  }
+  
+  a.btn.btn-sm.btn-primary.btn-pri:focus {
+    background-color: #ffba5a;
+    border-color: #ffba5a;
+    box-shadow: none;
+  }
+  
+  button.btn.btn-primary.set {
+    padding: 5px 18px;
+    height: 40px;
+    margin-top: 5px;
+  }
+  
+  td.mat-cell i.ri-delete-bin-5-fill {
+    padding-left: 15px;
+    cursor: pointer;
+  }
+  
+  th.mat-sort-header.mat-header-cell.cdk-header-cell {
+    font-size: 14px;
+    color: #393939;
+  }
+  
+  td.mat-cell {
+    color: #606060;
+  }
+  
+  td.mat-cell i.ri-delete-bin-5-fill {
+    padding-left: 25px;
+    cursor: pointer;
+  }
+  
+  td.mat-cell i.ri-delete-bin-5-fill:hover {
+    color: red;
+  }
+  
+  td.mat-cell i.ri-pencil-fill:hover {
+    color: #fb9400;
+    cursor: pointer;
+  }
+  
+  ::ng-deep .mat-form-field-should-float .mat-focused {
+    color: #fb9400;
+    border-bottom: none;
+    background-color: #fb9400;
+    display: none !important;
+  }
+  
+  .view_permission {
+    font-size: 18px;
+    margin-left: 40px;
+    cursor: pointer;
+  }
+  
+  .view_permission:hover {
+    color: #fb9400;
+  }
+  td.mat-cell i.fa {
+      padding-right: 15px;
+  }
+  
