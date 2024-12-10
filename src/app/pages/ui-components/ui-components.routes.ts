@@ -11,6 +11,7 @@ import { AppTablesComponent } from './tables/tables.component';
 import { CreateRoleComponent } from '../admin/role/create-role/create-role.component';
 import { RoleListComponent } from '../admin/role/role-list/role-list.component';
 import { EditRoleComponent } from '../admin/role/edit-role/edit-role.component';
+import { AssignRoleComponent } from '../admin/user/assign-role/assign-role.component';
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
@@ -49,6 +50,9 @@ export const UiComponentsRoutes: Routes = [
       },
       { path: 'edit-role/:id',
         component: EditRoleComponent,
+      },
+      { path: 'assign-role',
+        component: AssignRoleComponent,
       },
       {
         path: 'tables',

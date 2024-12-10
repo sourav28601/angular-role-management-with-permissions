@@ -53,6 +53,11 @@ export const navItems: NavItem[] = [
     iconName: 'solar:file-text-line-duotone',
     route: '/ui-components/role-list',
   },
+  {
+    displayName: 'Assign Role',
+    iconName: 'solar:file-text-line-duotone',
+    route: '/ui-components/assign-role',
+  },
   // {
   //   displayName: 'Tables',
   //   iconName: 'solar:tablet-line-duotone',

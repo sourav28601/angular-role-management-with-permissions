@@ -9,34 +9,30 @@ import { CommonModule } from '@angular/common';
   styleUrl: './view-permissions-dialog.component.scss'
 })
 export class ViewPermissionsDialogComponent {
-  title!: string;
-  message!: string;
-  sortedData: [] = [];
-
-  constructor(public dialogRef: MatDialogRef<ViewPermissionsDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: any) { }
-
-
-  ngOnInit(): void {
-      this.data = this.groupBy(this.data, 'permissionName');
-      this.data = Object.entries(this.data);
-  }
-
-  groupBy(obj: any, prop: any) {
-      return obj.reduce(function (acc: any, item: any) {
-          let key = item[prop];
-          if (typeof key === "string") {
-              key = key.replace(/\s+/g, "");
-          }
-          if (!acc[key]) {
-              acc[key] = [];
-          }
-          acc[key].push(item);
-          return acc;
-      }, {});
-  }
-
-  onClose(val: any): void {
+    title!: string;
+    message!: string;
+    chunkedData: any[] = []; // Array to hold permission names in chunks.
+  
+    constructor(
+      public dialogRef: MatDialogRef<ViewPermissionsDialogComponent>,
+      @Inject(MAT_DIALOG_DATA) public data: any[]
+    ) {}
+  
+    ngOnInit(): void {
+      this.chunkedData = this.chunkArray(this.data, 4);
+      console.log('Chunked Data:', this.chunkedData); // Debugging purpose
+    }
+  
+    chunkArray(array: any[], chunkSize: number): any[] {
+      const result = [];
+      for (let i = 0; i < array.length; i += chunkSize) {
+        result.push(array.slice(i, i + chunkSize));
+      }
+      return result;
+    }
+  
+    onClose(val: any): void {
       this.dialogRef.close(val);
+    }
   }
-}
+  

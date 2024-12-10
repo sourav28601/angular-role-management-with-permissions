@@ -43,6 +43,7 @@ export class CreateRoleComponent {
   checkedpermissionData: any;
   permissionData: any;
   snackBar: any;
+    permissionRows: any;
 
   constructor(
       private formBuilder: UntypedFormBuilder,
@@ -60,65 +61,73 @@ export class CreateRoleComponent {
   get formControls() { return this.roleForm.controls }
 
   getAllPermission() {
-      this.apiService.getAllPermissions().subscribe((respData: any) => {
-        console.log("respData",respData.data)
-          respData.data.map((res: any) => {
-            console.log("res-----",res)
-              res.completed = false;
-              res.permissionType = res.permissionType.toLowerCase() == 'get' ? 'view' : res.permissionType;
-          })
-          this.permissionData = respData.data;
-          console.log("permissionData----",this.permissionData)
-          // if (respData?.isError == false) {
-              this.permisson_obj = this.groupBy(respData.data, 'permissionName');
-              this.permisson_obj = Object.entries(this.permisson_obj);
-              console.log("this.permisson_obj--",this.permisson_obj)
-          // }
-      }, (err) => {
-        console.log("err--",err)
-          // this.apiService.setLoader(false);
-          // this.toastrService.showError(err.message, 'Error');
+    this.apiService.getAllPermissions().subscribe((respData: any) => {
+      // Format and update permissions
+      respData.data.map((res: any) => {
+        res.completed = false;
       });
-  }
-
-
-  onSubmit() {    
-    this.isSubmitted = true;    
-    this.allPermissions = [];    
-
-    this.permissionData.filter((p: any) => {        
-        if (p.completed) {            
-            this.allPermissions.push(p.id);        
-        }    
+  
+      // Flatten the permissions into rows of 4
+      const chunkSize = 4;
+      this.permissionRows = [];
+      for (let i = 0; i < respData.data.length; i += chunkSize) {
+        this.permissionRows.push(respData.data.slice(i, i + chunkSize));
+      }
+  
+      console.log("permissionRows: ", this.permissionRows);
+    }, (err) => {
+      console.log("Error fetching permissions: ", err);
     });
+  }
+  
+  onSubmit() {    
+    this.isSubmitted = true;
 
-    this.roleForm.value.permission_id = this.allPermissions;    
-    console.log("this.roleForm.value--", this.roleForm.value);
+    // Gather selected permission IDs directly
+    this.allPermissions = this.permissionRows
+      .flat() // Flatten the rows into a single array
+      .filter((permission: any) => permission.completed) // Keep only selected permissions
+      .map((permission: any) => permission.id); // Map to IDs
 
-    this.apiService.createRole(this.roleForm.value).subscribe(        
-        (respData: any) => {            
-            Swal.fire({                
-                title: 'Success!',                
-                text: 'Role created successfully.',                
-                icon: 'success',                
-                confirmButtonText: 'OK'            
-            }).then(() => {                
-                this.router.navigate(['/ui-components/role-list']);            
-            });        
-        },        
-        (err) => {            
-            Swal.fire({                
-                title: 'Error!',                
-                text: 'There was an error creating the role. Please try again.',                
-                icon: 'error',                
-                confirmButtonText: 'OK'            
-            });        
-        }    
-    ); 
+    // Assign selected permission IDs to the form value
+    this.roleForm.value.permission_id = this.allPermissions;
+
+    console.log("Role Form Data:", this.roleForm.value);
+
+    // Check if form is valid
+    // if (this.roleForm.invalid || this.allPermissions.length === 0) {
+    //   Swal.fire({
+    //     title: 'Validation Error!',
+    //     text: 'Please fill all required fields and select at least one permission.',
+    //     icon: 'warning',
+    //     confirmButtonText: 'OK'
+    //   });
+    //   return;
+    // }
+
+    // Hit the Create Role API
+    this.apiService.createRole(this.roleForm.value).subscribe(
+      (respData: any) => {
+        Swal.fire({
+          title: 'Success!',
+          text: 'Role created successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.router.navigate(['/ui-components/role-list']);
+        });
+      },
+      (err: any) => {
+        Swal.fire({
+          title: 'Error!',
+          text: 'There was an error creating the role. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
 }
 
-
-  
   setAll(completed: boolean,data:any) {
       this.checkedpermissionData = this.permisson_obj.filter((p:any)=> p[0] == data );
               
@@ -135,7 +144,6 @@ export class CreateRoleComponent {
   }
 
   someComplete(): boolean {
-
       if (this.checkedpermissionData == null) {
           return false;
       }
@@ -155,83 +163,6 @@ export class CreateRoleComponent {
           return acc;
       }, {});
   }
-
-  // roleForm: FormGroup;
-  // permissions: any;
-  // selectedPermissions: number[] = [];
-  // Object: any;
-  
-
-  // constructor(
-  //   private fb: FormBuilder,
-  //   private apiService: ApiService,
-  //   private snackBar: MatSnackBar,
-  //   private router: Router
-  // ) {
-  //   this.roleForm = this.fb.group({
-  //     name: ['', [Validators.required, Validators.minLength(3)]],
-  //     description: ['', [Validators.required, Validators.minLength(5)]]
-  //   });
-  // }
-
-  // ngOnInit() {
-  //   this.loadPermissions();
-  // }
-
-  // loadPermissions() {
-  //   this.apiService.getAllPermissions().subscribe({
-  //     next: (response: any) => {
-  //       const groupedPermissions = response.data.reduce((groups: any, permission: any) => {
-  //         if (!groups[permission.permissionName]) {
-  //           groups[permission.permissionName] = [];
-  //         }
-  //         groups[permission.permissionName].push(permission);
-  //         return groups;
-  //       }, {});
-  //       this.permissions = groupedPermissions;
-  //       console.log("Grouped Permissions: ", this.permissions);
-  //     },
-  //     error: (err) => {
-  //       console.log("Error: ", err);
-  //       this.snackBar.open('Error loading permissions', 'Close', { duration: 3000 });
-  //     }
-  //   });
-  // }
-  
-
-  // onPermissionChange(permissionId: number, checked: any) {
-  //   if (checked) {
-  //     this.selectedPermissions.push(permissionId);
-  //   } else {
-  //     this.selectedPermissions = this.selectedPermissions.filter(id => id !== permissionId);
-  //   }
-  // }
-
-  // onSubmit() {
-  //   if (this.roleForm.valid && this.selectedPermissions.length > 0) {
-  //     const roleData = {
-  //       ...this.roleForm.value,
-  //       permission_id: this.selectedPermissions
-  //     };
-
-  //     this.apiService.createRole(roleData).subscribe({
-  //       next: (response) => {
-  //         this.snackBar.open('Role created successfully', 'Close', { duration: 3000 });
-  //         this.router.navigate(['/dashboard']);
-  //       },
-  //       error: (err) => {
-  //         this.snackBar.open(err.message || 'Error creating role', 'Close', { duration: 3000 });
-  //       }
-  //     });
-  //   } else {
-  //     this.snackBar.open('Please fill all required fields and select at least one permission', 'Close', { duration: 3000 });
-  //   }
-  // }
-
-  // onCancel() {
-  //   this.router.navigate(['/roles']);
-  // }
-
 }
 
 

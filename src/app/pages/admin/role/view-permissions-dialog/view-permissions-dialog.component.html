@@ -1,19 +1,28 @@
-<div class="popup role-popup">
+  <div class="popup role-popup">
     <div mat-dialog-actions>
-        <i class="fa fa-window-close" (click)="onClose(true)"></i>
+      <i class="fa fa-window-close" (click)="onClose(true)"></i>
     </div>
-    <h1 mat-dialog-title>Permissions</h1>
+    <h1 mat-dialog-title style="padding-left: 20px;">Permissions</h1>
     <div mat-dialog-content>
-
-        <div class="product-table">
+      <div class="product-table">
+        <table>
             <thead>
-                <tr *ngFor="let item of data">
-                    <td><b> {{item[0]| titlecase}} :</b></td>
-                    <ng-container *ngFor="let permission of item[1]">
-                        <td>{{permission.permissionType | uppercase}}   </td>
-                    </ng-container>
+                <tr *ngFor="let row of chunkedData">
+                  <!-- <td><b>{{ item[0] | titlecase }}:</b></td> -->
+                  <ng-container *ngFor="let permission of row">
+                    <td>{{ permission.permissionName | titlecase }}</td>
+                  </ng-container>
                 </tr>
-            </thead>
-        </div>
+              </thead>
+          <!-- <tbody>
+            <tr *ngFor="let row of chunkedData">
+              <td *ngFor="let permission of row">
+                {{ permission.permissionName | titlecase }}
+              </td>
+            </tr>
+          </tbody> -->
+        </table>
+      </div>
     </div>
-</div>
+  </div>
+  

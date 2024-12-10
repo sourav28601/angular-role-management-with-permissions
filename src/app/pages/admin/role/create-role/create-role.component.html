@@ -7,7 +7,7 @@
       <div class="Advanced-Attribute mt-0 pt-4">
         <div class="card-body General-item">
           <div class="sku mt-3 mr-4 d-flex flex-column">
-            <span class="def">Name </span>
+            <span class="def" style="margin-bottom: 10px;">Name</span>
             <input class="in-put Def" type="text" placeholder="Name" name="name" formControlName="name"
               [ngClass]="{ 'is-invalid': isSubmitted && formControls['name'].errors }">
             <span class="text-danger" *ngIf="isSubmitted && formControls['name'].errors">
@@ -16,112 +16,37 @@
           </div>
         </div>
       </div>
-      <div class="Advanced-Attribute mt-0">
+
+      <div class="Advanced-Attribute mt-0" style="margin-top: 15px;">
         <div class="card-body General-item">
-          <div class="sku  mr-4 d-flex flex-column">
+          <div class="sku mr-4 d-flex flex-column">
             <span class="def">Permissions</span>
           </div>
         </div>
 
-        <div *ngIf="permisson_obj && permisson_obj.length > 0" class="ml-5">
-          <section class="example-section" *ngFor="let item of permisson_obj">
-            <span class="example-list-section font-weight-bold">
-              <mat-checkbox 
-                class="example-margin"  
-                [color]="'primary'"
-                (change)="setAll($event.checked, item[0])">
-                <span class="text-capitalize">{{item[0]}}</span>
+        <div *ngIf="permissionRows && permissionRows.length > 0" class="ml-5">
+          <div class="permission-row" *ngFor="let row of permissionRows">
+            <div class="permission-item" *ngFor="let permission of row">
+              <mat-checkbox [(ngModel)]="permission.completed" [ngModelOptions]="{standalone: true}" [color]="'warn'"
+                (ngModelChange)="updateAllComplete()" [style.textTransform]="'none'">
+                <span [style.textTransform]="'none'">{{ permission.permissionName }}</span>
               </mat-checkbox>
-            </span>
-            <span class="example-list-section">
-              <ul class="d-flex">
-                <li *ngFor="let subtask of item[1] || []" class="ml-4 list-unstyled">
-                  <mat-checkbox 
-                    [(ngModel)]="subtask.completed"
-                    [ngModelOptions]="{standalone: true}" 
-                    [color]="'warn'"
-                    (ngModelChange)="updateAllComplete()">
-                    <span class="text-capitalize"> {{subtask.permissionType}} </span>
-                  </mat-checkbox>
-                </li>
-              </ul>
-            </span>
-          </section>
+
+            </div>
+          </div>
         </div>
 
-        <div *ngIf="permisson_obj && permisson_obj.length == 0">
+        <div *ngIf="!permissionRows || permissionRows.length === 0">
           <section class="example-section mb-3 ml-4">
             No Permissions found
           </section>
         </div>
-
       </div>
+
+
       <div class="save ml-4">
         <button type="submit" class="btn btn-sm btn-primary btn-pri">Save</button>
       </div>
     </form>
-    <!-- <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
-      <div class="row">
-        <div class="col-lg-6">
-          <mat-label class="f-w-600 m-b-8 d-block">Role Name</mat-label>
-          <mat-form-field appearance="outline" class="w-100">
-            <input matInput placeholder="Enter role name" formControlName="name" required />
-            <mat-error *ngIf="roleForm.get('name')?.hasError('required')">
-              Role name is required
-            </mat-error>
-            <mat-error *ngIf="roleForm.get('name')?.hasError('minlength')">
-              Minimum 3 characters are required
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-lg-6">
-          <mat-label class="f-w-600 m-b-8 d-block">Role Description</mat-label>
-          <mat-form-field appearance="outline" class="w-100">
-            <textarea matInput placeholder="Enter role description" formControlName="description" rows="3"></textarea>
-            <mat-error *ngIf="roleForm.get('description')?.hasError('required')">
-              Description is required
-            </mat-error>
-            <mat-error *ngIf="roleForm.get('description')?.hasError('minlength')">
-              Minimum 5 characters are required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="permissions-section">
-        <div class="permissions-header">
-          <span>Create</span>
-          <span>Update</span>
-          <span>Read</span>
-          <span>Delete</span>
-        </div>
-        <div class="permissions-row">
-          <span>User</span>
-          <mat-checkbox checked disabled></mat-checkbox>
-          <mat-checkbox checked disabled></mat-checkbox>
-          <mat-checkbox checked disabled></mat-checkbox>
-          <mat-checkbox checked disabled></mat-checkbox>
-        </div>
-        <div class="permissions-row">
-          <span>Subscription</span>
-          <mat-checkbox></mat-checkbox>
-          <mat-checkbox></mat-checkbox>
-          <mat-checkbox></mat-checkbox>
-          <mat-checkbox></mat-checkbox>
-        </div>
-      </div>
-
-      <div class="actions m-t-16">
-        <button mat-raised-button color="primary" type="submit" [disabled]="roleForm.invalid">
-          Create Role
-        </button>
-        <button mat-raised-button color="warn" type="button">
-          Cancel
-        </button>
-      </div>
-    </form> -->
-
-
   </mat-card-content>
 </mat-card>

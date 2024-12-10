@@ -31,8 +31,15 @@ export class ApiService {
   createRole(data:any){
     return this.postApi('role/create',data);
   }
+  assignRoleToUser(data:any){
+    console.log("api send data",data)
+    return this.postApi('user/add',data);
+  }
   getAllPermissions(){
     return this.getApi('permission/all');
+  }
+  getRoles(){
+    return this.getApi('role/all');
   }
   getRoleList(){
     return this.getApi('role/get');
@@ -41,6 +48,7 @@ export class ApiService {
     return this.getApi(`role/get/${id}`);
   }
   updateRole(id:any, data:any){
+    console.log("update data--",data)
     return this.putApi(`role/update/${id}`,data);
   }
   deleteRole(id:any){

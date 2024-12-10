@@ -1,0 +1,96 @@
+<mat-card class="cardWithShadow theme-card">
+    <mat-card-header>
+      <mat-card-title class="m-b-0">Assign role to user</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="b-t-1">
+        <form autocomplete="off" [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+            <div class="Advanced-Attribute mt-0 pt-4">
+              <div class="card-body General-item">
+                <!-- Username Input -->
+                <div class="sku mt-3 mr-4 d-flex flex-column">
+                  <span class="def" style="margin-bottom: 10px;">Username</span>
+                  <input 
+                    class="in-put Def" 
+                    type="text" 
+                    placeholder="Enter username" 
+                    name="username" 
+                    formControlName="username"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['username'].errors }">
+                  <span class="text-danger" *ngIf="isSubmitted && formControls['username'].errors">
+                    The Username field is required
+                  </span>
+                </div>
+          
+                <!-- Role Selection -->
+                <div class="sku mt-3 mr-4 d-flex flex-column">
+                  <span class="def" style="margin-top: 10px;margin-bottom: 10px;">Role</span>
+                  <select 
+                    class="form-control in-put Def" 
+                    name="role" 
+                    formControlName="role"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['role'].errors }">
+                    <option value="" disabled selected>Select a role</option>
+                    <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+                  </select>
+                  <span class="text-danger" *ngIf="isSubmitted && formControls['role'].errors">
+                    The Role field is required
+                  </span>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Override Permissions Button -->
+            <div class="override-permissions ml-4 mt-3" style="margin-top:20px;margin-bottom: 20px;">
+              <button 
+                type="button" 
+                class="btn btn-sm btn-secondary" 
+                (click)="toggleOverridePermissions()">
+                Override Permissions ({{ selectedPermissionsCount }})
+              </button>&nbsp;&nbsp;
+              <button 
+                *ngIf="isOverride" 
+                type="button" 
+                class="btn btn-sm btn-danger ml-2" 
+                (click)="clearAllPermissions()">
+                Clear All Permissions
+              </button>
+            </div>
+          
+            <!-- Permissions Section -->
+            <div class="Advanced-Attribute mt-0" style="margin-top: 15px;" *ngIf="isOverride">
+              <div class="card-body General-item">
+                <div class="sku mr-4 d-flex flex-column">
+                  <span class="def">Permissions</span>
+                </div>
+              </div>
+          
+              <div *ngIf="permissionRows && permissionRows.length > 0" class="ml-5">
+                <div class="permission-row" *ngFor="let row of permissionRows">
+                  <div class="permission-item" *ngFor="let permission of row">
+                    <mat-checkbox 
+                      [(ngModel)]="permission.completed" 
+                      [ngModelOptions]="{standalone: true}" 
+                      [color]="'warn'"
+                      (ngModelChange)="updatePermissionCount()" 
+                      [style.textTransform]="'none'">
+                      <span [style.textTransform]="'none'">{{ permission.permissionName }}</span>
+                    </mat-checkbox>
+                  </div>
+                </div>
+              </div>
+          
+              <div *ngIf="!permissionRows || permissionRows.length === 0">
+                <section class="example-section mb-3 ml-4">
+                  No Permissions found
+                </section>
+              </div>
+            </div>
+          
+            <!-- Save Button -->
+            <div class="save ml-4">
+              <button type="submit" class="btn btn-sm btn-primary btn-pri">Save</button>
+            </div>
+          </form>
+          
+    </mat-card-content>
+  </mat-card>
