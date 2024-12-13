@@ -27,28 +27,42 @@
 
                             <ng-container matColumnDef="view_permission">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> View Permissions </th>
-                                <td mat-cell *matCellDef="let row" class="center-cell">
-                                    <button type="submit" class="btn btn-sm btn-primary btn-pri" (click)="viewPermissions(row.Permissions)">View</button>
+                                <td mat-cell *matCellDef="let row" class="center-icon">
+                                    <mat-icon 
+                                        (click)="viewPermissions(row.Permissions)" 
+                                        style="cursor: pointer; color: blue; font-size: 24px;"
+                                    >
+                                        person
+                                    </mat-icon>
                                 </td>
                             </ng-container>
+                            
+                            
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
                                 <td mat-cell *matCellDef="let row" class="center-cell">
-                                    <button 
-                                        type="button" 
-                                        class="btn btn-sm btn-warning" 
-                                        [routerLink]="['/ui-components/edit-role/'+row.id]">
-                                        Edit
-                                    </button>
-                                    &nbsp;
-                                    <button 
-                                        type="button" 
-                                        class="btn btn-sm btn-danger" 
-                                        (click)="deleteRole(row.id)">
-                                        Delete
-                                    </button>
+                                    <!-- Edit Icon -->
+                                    <mat-icon 
+                                        class="action-icon edit-icon" 
+                                        color="primary" 
+                                        [routerLink]="['/ui-components/edit-role/'+row.id]" 
+                                        style="cursor: pointer;" 
+                                        aria-label="Edit Role">
+                                        edit
+                                    </mat-icon>&nbsp;
+                            
+                                    <!-- Delete Icon -->
+                                    <mat-icon 
+                                        class="action-icon delete-icon" 
+                                        color="warn" 
+                                        (click)="deleteRole(row.id)" 
+                                        style="cursor: pointer;" 
+                                        aria-label="Delete Role">
+                                        delete
+                                    </mat-icon>
                                 </td>
                             </ng-container>
+                            
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns:
                               displayedColumns;"></tr>

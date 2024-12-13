@@ -12,6 +12,8 @@ import { CreateRoleComponent } from '../admin/role/create-role/create-role.compo
 import { RoleListComponent } from '../admin/role/role-list/role-list.component';
 import { EditRoleComponent } from '../admin/role/edit-role/edit-role.component';
 import { AssignRoleComponent } from '../admin/user/assign-role/assign-role.component';
+import { ListAssignRoleComponent } from '../admin/user/list-assign-role/list-assign-role.component';
+import { EditAssignRoleComponent } from '../admin/user/edit-assign-role/edit-assign-role.component';
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
@@ -53,6 +55,12 @@ export const UiComponentsRoutes: Routes = [
       },
       { path: 'assign-role',
         component: AssignRoleComponent,
+      },
+      { path: 'user-list',
+        component: ListAssignRoleComponent,
+      },
+      { path: 'edit-user/:id',
+        component: EditAssignRoleComponent,
       },
       {
         path: 'tables',

@@ -1,1 +1,130 @@
-<p>edit-assign-role works!</p>
+<form autocomplete="off" [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+    <div class="Advanced-Attribute mt-0 pt-4">
+        <div class="card-body General-item">
+            <!-- Username Input -->
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput type="text" placeholder="Enter username" formControlName="username"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['username'].errors }">
+                <mat-error *ngIf="isSubmitted && formControls['username'].errors">
+                    The Username field is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Email Input -->
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" placeholder="Enter email" formControlName="email"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['email'].errors }">
+                <mat-error *ngIf="isSubmitted && formControls['email'].errors">
+                    A valid email is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Password Input -->
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="showPassword ? 'text' : 'password'" placeholder="Enter password"
+                    formControlName="password"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['password'].errors }"
+                    (input)="checkPasswordStrength()">
+                <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility('password')"
+                    [attr.aria-label]="'Toggle password visibility'">
+                    <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="isSubmitted && formControls['password'].errors">
+                    Password must meet the required criteria
+                </mat-error>
+                <mat-hint>Password Strength: {{ passwordStrength }}</mat-hint>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="button" (click)="generatePassword()"
+                style="margin-bottom: 16px;margin-top:5px;">
+                Generate Password
+            </button>
+
+            <!-- Confirm Password Input -->
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput [type]="showConfirmPassword ? 'text' : 'password'" placeholder="Confirm password"
+                    formControlName="confirmPassword"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['confirmPassword'].errors }">
+                <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility('confirmPassword')"
+                    [attr.aria-label]="'Toggle confirm password visibility'">
+                    <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="isSubmitted && formControls['confirmPassword'].errors">
+                    Passwords do not match
+                </mat-error>
+            </mat-form-field>
+
+
+            <!-- Is Active -->
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Is Deactivated</mat-label>
+                <mat-select formControlName="is_active"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['is_active'].errors }">
+                    <mat-option value="" disabled>Select status</mat-option>
+                    <mat-option value="true">Yes</mat-option>
+                    <mat-option value="false">No</mat-option>
+                </mat-select>
+                <mat-error *ngIf="isSubmitted && formControls['is_active'].errors">
+                    The Status field is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Role Selection -->
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="role"
+                    [ngClass]="{ 'is-invalid': isSubmitted && formControls['role'].errors }">
+                    <mat-option value="" disabled>Select a role</mat-option>
+                    <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="isSubmitted && formControls['role'].errors">
+                    The Role field is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <!-- Override Permissions Button -->
+    <div class="override-permissions">
+        <button mat-raised-button color="accent" type="button" (click)="toggleOverridePermissions()">
+            Override Permissions ({{ selectedPermissionsCount }})
+        </button>&nbsp;
+        <button *ngIf="isOverride" mat-raised-button color="warn" type="button" (click)="clearAllPermissions()">
+            Clear All Permissions
+        </button>
+    </div>
+
+    <!-- Permissions Section -->
+    <div class="Advanced-Attribute mt-0" style="margin-top: 15px;" *ngIf="isOverride">
+        <div class="card-body General-item">
+            <div class="sku mr-4 d-flex flex-column">
+                <span class="def">Permissions</span>
+            </div>
+        </div>
+
+        <div *ngIf="permissionRows && permissionRows.length > 0" class="ml-5">
+            <div class="permission-row" *ngFor="let row of permissionRows">
+                <div class="permission-item" *ngFor="let permission of row">
+                    <mat-checkbox [(ngModel)]="permission.completed" [ngModelOptions]="{ standalone: true }"
+                        [color]="'warn'" (ngModelChange)="updatePermissionCount()">
+                        <span>{{ permission.permissionName }}</span>
+                    </mat-checkbox>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!permissionRows || permissionRows.length === 0">
+            <section class="example-section mb-3 ml-4">
+                No Permissions found
+            </section>
+        </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="save ml-4" style="margin-top: 20px;">
+        <button type="submit" mat-raised-button color="accent">Save</button>
+    </div>
+</form>

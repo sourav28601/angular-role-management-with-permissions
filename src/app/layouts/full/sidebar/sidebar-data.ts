@@ -54,9 +54,14 @@ export const navItems: NavItem[] = [
     route: '/ui-components/role-list',
   },
   {
-    displayName: 'Assign Role',
+    displayName: 'Create User',
     iconName: 'solar:file-text-line-duotone',
     route: '/ui-components/assign-role',
+  },
+  {
+    displayName: 'User List',
+    iconName: 'solar:file-text-line-duotone',
+    route: '/ui-components/user-list',
   },
   // {
   //   displayName: 'Tables',

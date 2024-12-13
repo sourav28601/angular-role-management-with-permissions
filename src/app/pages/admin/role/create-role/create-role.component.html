@@ -7,12 +7,12 @@
       <div class="Advanced-Attribute mt-0 pt-4">
         <div class="card-body General-item">
           <div class="sku mt-3 mr-4 d-flex flex-column">
-            <span class="def" style="margin-bottom: 10px;">Name</span>
-            <input class="in-put Def" type="text" placeholder="Name" name="name" formControlName="name"
-              [ngClass]="{ 'is-invalid': isSubmitted && formControls['name'].errors }">
-            <span class="text-danger" *ngIf="isSubmitted && formControls['name'].errors">
-              The "Name" field is required
-            </span>
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput type="text" placeholder="Enter role name" formControlName="name"
+                [ngClass]="{ 'is-invalid': isSubmitted && formControls['name'].errors }">
+              <mat-error *ngIf="isSubmitted && formControls['name'].errors">name field is required</mat-error>
+            </mat-form-field>
           </div>
         </div>
       </div>
@@ -42,11 +42,9 @@
           </section>
         </div>
       </div>
-
-
-      <div class="save ml-4">
-        <button type="submit" class="btn btn-sm btn-primary btn-pri">Save</button>
-      </div>
+        <button type="submit" mat-raised-button color="accent">
+          Save
+        </button>
     </form>
   </mat-card-content>
 </mat-card>

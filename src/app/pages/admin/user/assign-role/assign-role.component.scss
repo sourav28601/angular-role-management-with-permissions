@@ -4,7 +4,13 @@
     flex-wrap: wrap;
     margin-bottom: 5px;
   }
-  
+.full-width {
+  width: 100%;
+}
+.mat-form-field {
+  margin-bottom: 16px;
+}
+
   .permission-item {
     flex: 0 0 25%; /* 4 items per row */
     box-sizing: border-box;
@@ -12,5 +18,22 @@
   }
   .permission-item span {
     text-transform: none; /* Ensure normal text case */
+  }
+  .password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .password-input {
+    padding-right: 40px; /* Make space for the icon */
+  }
+  
+  .password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54); /* Material design standard icon color */
+    user-select: none;
   }
   

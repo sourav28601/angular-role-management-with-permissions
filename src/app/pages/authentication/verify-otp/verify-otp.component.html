@@ -8,22 +8,21 @@
               <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Enter OTP</mat-label>
               <div class="otp-inputs">
                 <input
+                  #otpInputs
                   type="text"
                   maxlength="1"
                   class="otp-box"
                   *ngFor="let control of otpArray; let i = index"
                   [formControlName]="'digit' + (i + 1)"
-                  (input)="focusNext($event, i)"
-                  (keydown.backspace)="focusPrevious($event, i)"
+                  (input)="onInput($event, i)"
+                  (paste)="onPaste($event)"
+                  (keydown)="onKeyDown($event, i)"
                 />
               </div>
-      
+              
               <button mat-flat-button color="primary" class="w-100" type="submit" [disabled]="!otpForm.valid">
                 Verify
               </button>
-              <!-- <a [routerLink]="['/']" mat-flat-button color="primary" class="w-100">
-                Sign In
-              </a> -->
             </form>
           </mat-card-content>
         </mat-card>

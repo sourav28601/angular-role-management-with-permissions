@@ -11,9 +11,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RouterLink, RouterLinkActive} from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 // import { ConfirmationDialogComponent } from 'src/app/user/pages/shared/confirmation-dialog/confirmation-dialog.component';
 import { ViewPermissionsDialogComponent } from '../view-permissions-dialog/view-permissions-dialog.component';
 import Swal from 'sweetalert2';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'app-role-list',
@@ -26,7 +28,9 @@ import Swal from 'sweetalert2';
       FormsModule,
       ReactiveFormsModule,
       CommonModule,
-      RouterLink
+      RouterLink,
+      MatCardModule,
+      MatIcon
     ],
     templateUrl: './role-list.component.html',
     styleUrls: []
