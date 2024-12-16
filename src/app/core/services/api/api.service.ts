@@ -37,10 +37,31 @@ export class ApiService {
   getRoles(){
     return this.getApi('admin_role/all');
   }
-  getRoleList(){
+  getRoleList(params: {
+    page?: number, 
+    limit?: number, 
+    search?: string
+  } = {}){
     return this.getApi('admin_role/view_role');
   }
-  getUserList(){
+  // getRoleList(params: {
+  //   page?: number, 
+  //   limit?: number, 
+  //   search?: string
+  // } = {}) {
+  //   return this.http.get<any>('your-api-endpoint', { 
+  //     params: {
+  //       page: params.page?.toString() || '0',
+  //       limit: params.limit?.toString() || '10',
+  //       search: params.search || ''
+  //     }
+  //   });
+  // }
+  getUserList(params: {
+    page?: number, 
+    limit?: number, 
+    search?: string
+  } = {}){
     return this.getApi('admin_user/view_user');
   }
   getRoleByID(id:any){

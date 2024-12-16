@@ -1,0 +1,14 @@
+.mat-form-field-invalid .mat-form-field-outline {
+    border-color: red !important;
+  }
+  
+  .error-message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: red;
+  }
+  .is-invalid {
+    border: 1px solid red;
+    box-shadow: 0 0 5px red;
+  }
+  

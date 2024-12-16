@@ -64,38 +64,69 @@ export class EditRoleComponent {
   
     getRole() {
       this.apiService.getRoleByID(this.categoryId).subscribe(
-        (respData: any) => {
-          this.setValue(respData?.data);
-          respData.data.Permissions.forEach((per: any) => {
-            this.permissionIds.push(per.id);
-            const matchingPermission = this.permissionData.find(
-              (p: any) => p.id === per.id
-            );
-            if (matchingPermission) {
-              matchingPermission.completed = true;
-            }
-          });
-          // Initialize the permissions in the form
-          this.setPermissions();
-        },
-        (err) => {
-          console.error('Error fetching role data:', err);
-        }
+        // (respData: any) => {
+        //   this.setValue(respData?.data);
+        //   respData.data.Permissions.forEach((per: any) => {
+        //     this.permissionIds.push(per.id);
+        //     const matchingPermission = this.permissionData.find(
+        //       (p: any) => p.id === per.id
+        //     );
+        //     if (matchingPermission) {
+        //       matchingPermission.completed = true;
+        //     }
+        //   });
+        //   // Initialize the permissions in the form
+        //   this.setPermissions();
+        // },
+        // (err) => {
+        //   console.error('Error fetching role data:', err);
+        // }
+        {
+          next: (respData) => {
+            this.setValue(respData?.data);
+              respData.data.Permissions.forEach((per: any) => {
+                this.permissionIds.push(per.id);
+                const matchingPermission = this.permissionData.find(
+                  (p: any) => p.id === per.id
+                );
+                if (matchingPermission) {
+                  matchingPermission.completed = true;
+                }
+              });
+              // Initialize the permissions in the form
+              this.setPermissions();
+          },
+          error: (error) => {
+            console.error('Error fetching role data:', error);
+          },
+          }
       );
     }
   
     getAllPermissions() {
       this.apiService.getAllPermissions().subscribe(
-        (respData: any) => {
-          this.permissionData = respData.data.map((res: any) => ({
-            ...res,
-            completed: this.permissionIds.includes(res.id),
-          }));
-          this.setPermissions(); // Set permissions when data is fetched
-        },
-        (err) => {
-          console.error('Error fetching permissions:', err);
-        }
+        {
+          next: (respData) => {
+            this.permissionData = respData.data.map((res: any) => ({
+                  ...res,
+                  completed: this.permissionIds.includes(res.id),
+                }));
+                this.setPermissions(); // Set permissions when data is fetched
+          },
+          error: (error) => {
+            console.error('Error fetching permissions:', error);
+          },
+          }
+        // (respData: any) => {
+        //   this.permissionData = respData.data.map((res: any) => ({
+        //     ...res,
+        //     completed: this.permissionIds.includes(res.id),
+        //   }));
+        //   this.setPermissions(); // Set permissions when data is fetched
+        // },
+        // (err) => {
+        //   console.error('Error fetching permissions:', err);
+        // }
       );
     }
   
@@ -130,24 +161,26 @@ export class EditRoleComponent {
       console.log("Final Form data: ", this.roleForm.value);
   
       this.apiService.updateRole(this.categoryId, this.roleForm.value).subscribe(
-        (respData: any) => {
-          Swal.fire({
-            title: 'Success!',
-            text: 'Role updated successfully.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          }).then(() => {
-            this.router.navigate(['/ui-components/role-list']);
-          });
-        },
-        (err) => {
-          Swal.fire({
-            title: 'Error!',
-            text: 'There was an error updating the role. Please try again.',
-            icon: 'error',
-            confirmButtonText: 'OK',
-          });
-        }
+        {
+          next: (response) => {
+            Swal.fire({
+                  title: 'Success!',
+                  text: 'Role updated successfully.',
+                  icon: 'success',
+                  confirmButtonText: 'OK',
+                }).then(() => {
+                  this.router.navigate(['/ui-components/role-list']);
+                });
+          },
+          error: (error) => {
+            Swal.fire({
+                  title: 'Error!',
+                  text: 'There was an error updating the role. Please try again.',
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                });
+          },
+          }
       );
     }
   }

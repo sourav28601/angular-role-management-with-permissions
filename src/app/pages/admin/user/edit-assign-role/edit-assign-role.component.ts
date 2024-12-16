@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule,FormBuilder, FormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  UntypedFormBuilder,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,7 +16,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
-import { Router, ActivatedRoute} from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from 'src/app/core/services/api/api.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
@@ -30,10 +37,10 @@ import { MatIcon } from '@angular/material/icon';
     MatCheckboxModule,
     CommonModule,
     MatTableModule,
-    MatIcon
+    MatIcon,
   ],
   templateUrl: './edit-assign-role.component.html',
-  styleUrl: './edit-assign-role.component.scss'
+  styleUrl: './edit-assign-role.component.scss',
 })
 export class EditAssignRoleComponent implements OnInit {
   roleForm: FormGroup;
@@ -91,52 +98,96 @@ export class EditAssignRoleComponent implements OnInit {
 
   getUserDataById(userId: string) {
     this.apiService.getUserDataByID(userId).subscribe(
-      (respData: any) => {
-        console.log('Edit respData---', respData);
-        const userData = respData.data;
-
-        // Populate form fields
-        this.roleForm.patchValue({
-          username: userData.username,
-          email: userData.email,
-          role: userData.User_Roles?.[0]?.role_id || '',
-          is_active: userData.is_active ? 'true' : 'false',
-        });
-
-        // Handle permissions for override
-        this.isOverride = !!userData.User_Permissions.length;
-        const userPermissions = userData.User_Permissions.map(
-          (p: any) => p.permission_id
-        );
-
-        this.getAllPermission(() => {
-          // Mark user's permissions as checked
-          this.permissionRows.forEach((row) => {
-            row.forEach((permission: any) => {
-              permission.completed = userPermissions.includes(permission.id);
-            });
+      {
+        next: (respData) => {
+          console.log('Edit respData---', respData);
+          const userData = respData.data;
+          // Populate form fields
+          this.roleForm.patchValue({
+            username: userData.username,
+            email: userData.email,
+            role: userData.User_Roles?.[0]?.role_id || '',
+            is_active: userData.is_active ? 'true' : 'false',
           });
-          this.updatePermissionCount();
-        });
-      },
-      (err) => {
-        console.error('Error fetching user data:', err);
+
+          // Handle permissions for override
+          this.isOverride = !!userData.User_Permissions.length;
+          const userPermissions = userData.User_Permissions.map(
+            (p: any) => p.permission_id
+          );
+
+          this.getAllPermission(() => {
+            // Mark user's permissions as checked
+            this.permissionRows.forEach((row) => {
+              row.forEach((permission: any) => {
+                permission.completed = userPermissions.includes(permission.id);
+              });
+            });
+            this.updatePermissionCount();
+          });
+        },
+        error: (error) => {
+          console.error('Error fetching user data:', error);
+        },
       }
+      // (respData: any) => {
+      //   console.log('Edit respData---', respData);
+      //   const userData = respData.data;
+
+      //   // Populate form fields
+      //   this.roleForm.patchValue({
+      //     username: userData.username,
+      //     email: userData.email,
+      //     role: userData.User_Roles?.[0]?.role_id || '',
+      //     is_active: userData.is_active ? 'true' : 'false',
+      //   });
+
+      //   // Handle permissions for override
+      //   this.isOverride = !!userData.User_Permissions.length;
+      //   const userPermissions = userData.User_Permissions.map(
+      //     (p: any) => p.permission_id
+      //   );
+
+      //   this.getAllPermission(() => {
+      //     // Mark user's permissions as checked
+      //     this.permissionRows.forEach((row) => {
+      //       row.forEach((permission: any) => {
+      //         permission.completed = userPermissions.includes(permission.id);
+      //       });
+      //     });
+      //     this.updatePermissionCount();
+      //   });
+      // },
+      // (err) => {
+      //   console.error('Error fetching user data:', err);
+      // }
     );
   }
 
   getAllPermission(callback?: Function) {
     this.apiService.getAllPermissions().subscribe(
-      (respData: any) => {
-        respData.data.map((permission: any) => {
-          permission.completed = false; // Default unchecked
-        });
-        this.permissionRows = this.chunkPermissions(respData.data);
-        if (callback) callback();
-      },
-      (err) => {
-        console.error('Error fetching permissions:', err);
+      {
+        next: (respData) => {
+          respData.data.map((permission: any) => {
+            permission.completed = false; // Default unchecked
+          });
+          this.permissionRows = this.chunkPermissions(respData.data);
+          if (callback) callback();
+        },
+        error: (error) => {
+          console.error('Error fetching permissions:', error);
+        },
       }
+      // (respData: any) => {
+      //   respData.data.map((permission: any) => {
+      //     permission.completed = false; // Default unchecked
+      //   });
+      //   this.permissionRows = this.chunkPermissions(respData.data);
+      //   if (callback) callback();
+      // },
+      // (err) => {
+      //   console.error('Error fetching permissions:', err);
+      // }
     );
   }
 
@@ -166,7 +217,11 @@ export class EditAssignRoleComponent implements OnInit {
       /[!@#$%^&*]/.test(password)
     ) {
       this.passwordStrength = 'Strong';
-    } else if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+    } else if (
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password)
+    ) {
       this.passwordStrength = 'Moderate';
     } else {
       this.passwordStrength = 'Weak';
@@ -178,7 +233,11 @@ export class EditAssignRoleComponent implements OnInit {
       return 'Weak';
     } else if (password.match(/[A-Z]/) && password.match(/[0-9]/)) {
       return 'Moderate';
-    } else if (password.match(/[A-Z]/) && password.match(/[0-9]/) && password.match(/[@$!%*?&]/)) {
+    } else if (
+      password.match(/[A-Z]/) &&
+      password.match(/[0-9]/) &&
+      password.match(/[@$!%*?&]/)
+    ) {
       return 'Strong';
     }
     return 'Weak';
@@ -195,12 +254,20 @@ export class EditAssignRoleComponent implements OnInit {
 
   getRoles() {
     this.apiService.getRoles().subscribe(
-      (respData: any) => {
-        this.roles = respData.data;
-      },
-      (err) => {
-        console.error('Error fetching roles:', err);
-      }
+      {
+        next: (respData) => {
+          this.roles = respData.data
+        },
+        error: (error) => {
+          console.error('Error fetching roles:', error);
+        },
+        }
+      // (respData: any) => {
+      //   this.roles = respData.data;
+      // },
+      // (err) => {
+      //   console.error('Error fetching roles:', err);
+      // }
     );
   }
 
@@ -230,7 +297,9 @@ export class EditAssignRoleComponent implements OnInit {
 
   clearAllPermissions() {
     this.permissionRows.forEach((row) => {
-      row.forEach((permission: { completed: boolean; }) => (permission.completed = false));
+      row.forEach(
+        (permission: { completed: boolean }) => (permission.completed = false)
+      );
     });
     this.updatePermissionCount();
   }
@@ -261,24 +330,45 @@ export class EditAssignRoleComponent implements OnInit {
 
     if (this.userId) {
       this.apiService.updateUser(this.userId, formData).subscribe(
-        (respData: any) => {
-          Swal.fire({
-            title: 'Success!',
-            text: 'User updated successfully.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          }).then(() => {
-            this.router.navigate(['/ui-components/user-list']);
-          });
-        },
-        (err: any) => {
-          Swal.fire({
-            title: 'Error!',
-            text: 'There was an error updating the user. Please try again.',
-            icon: 'error',
-            confirmButtonText: 'OK',
-          });
-        }
+        {
+          next: (respData) => {
+            Swal.fire({
+                  title: 'Success!',
+                  text: 'User updated successfully.',
+                  icon: 'success',
+                  confirmButtonText: 'OK',
+                }).then(() => {
+                  this.router.navigate(['/ui-components/user-list']);
+                });
+              },
+
+          error: (error) => {
+            Swal.fire({
+                  title: 'Error!',
+                  text: 'There was an error updating the user. Please try again.',
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                });
+              }
+          }
+        // (respData: any) => {
+        //   Swal.fire({
+        //     title: 'Success!',
+        //     text: 'User updated successfully.',
+        //     icon: 'success',
+        //     confirmButtonText: 'OK',
+        //   }).then(() => {
+        //     this.router.navigate(['/ui-components/user-list']);
+        //   });
+        // },
+        // (err: any) => {
+        //   Swal.fire({
+        //     title: 'Error!',
+        //     text: 'There was an error updating the user. Please try again.',
+        //     icon: 'error',
+        //     confirmButtonText: 'OK',
+        //   });
+        // }
       );
     }
   }

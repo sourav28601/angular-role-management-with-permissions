@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule,FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,21 +35,20 @@ import { MatIconModule } from '@angular/material/icon';
     MatCheckboxModule,
     CommonModule,
     MatTableModule,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './assign-role.component.html',
-  styleUrl: './assign-role.component.scss'
+  styleUrl: './assign-role.component.scss',
 })
-
 export class AssignRoleComponent {
   roleForm: FormGroup;
-  roles : any;
-  permissionRows : any;// Populate this dynamically
+  roles: any;
+  permissionRows: any; // Populate this dynamically
   isSubmitted = false;
   isOverride = false;
   selectedPermissionsCount = 0;
-  showPassword = true; 
-  showConfirmPassword = true; 
+  showPassword = true;
+  showConfirmPassword = true;
   passwordStrength = '';
 
   constructor(
@@ -51,23 +56,26 @@ export class AssignRoleComponent {
     private apiService: ApiService,
     private router: Router
   ) {
-    this.roleForm = this.fb.group({
-      username: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(
-            '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'
-          ),
+    this.roleForm = this.fb.group(
+      {
+        username: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(
+              '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'
+            ),
+          ],
         ],
-      ],
-      confirmPassword: ['', Validators.required],
-      role: ['', Validators.required],
-      is_active: ['', Validators.required],
-    }, { validator: this.matchPasswords });    
+        confirmPassword: ['', Validators.required],
+        role: ['', Validators.required],
+        is_active: ['', Validators.required],
+      },
+      { validator: this.matchPasswords }
+    );
     this.getRoles();
   }
   matchPasswords(group: FormGroup) {
@@ -83,21 +91,20 @@ export class AssignRoleComponent {
     }
   }
   generatePassword() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@$!%*?&';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@$!%*?&';
     const password = Array.from({ length: 12 }, () =>
       chars.charAt(Math.floor(Math.random() * chars.length))
     ).join('');
-    
+
     // Update both password and confirmPassword fields
-    this.roleForm.patchValue({ 
-      password: password, 
-      confirmPassword: password  // Set the same value for confirm password
+    this.roleForm.patchValue({
+      password: password,
+      confirmPassword: password, // Set the same value for confirm password
     });
     this.checkPasswordStrength();
   }
-  
-  
-  
+
   checkPasswordStrength() {
     const password = this.roleForm.get('password')?.value || '';
     if (password.length < 8) {
@@ -108,8 +115,6 @@ export class AssignRoleComponent {
       this.passwordStrength = 'Moderate';
     }
   }
-  
-  
 
   get formControls() {
     return this.roleForm.controls;
@@ -123,38 +128,77 @@ export class AssignRoleComponent {
     }
   }
   getRoles() {
-    this.apiService.getRoles().subscribe((respData: any) => {
-        console.log("role respData")
-         this.roles = respData.data
-      }, (err) => {
-        console.log("Error fetching permissions: ", err);
+    this.apiService.getRoles().subscribe({
+      next: (respData) => {
+        console.log('role respData');
+        this.roles = respData.data;
+      },
+      error: (error) => {
+        console.log('Error fetching permissions: ', error);
+      },
     });
+    //   (respData: any) => {
+    //     console.log("role respData")
+    //      this.roles = respData.data
+    //   }, (err) => {
+    //     console.log("Error fetching permissions: ", err);
+    // });
   }
   getAllPermission() {
-    this.apiService.getAllPermissions().subscribe((respData: any) => {
-      respData.data.map((res: any) => {
-        res.completed = false;
-      });
-      const chunkSize = 4;
-      this.permissionRows = [];
-      for (let i = 0; i < respData.data.length; i += chunkSize) {
-        this.permissionRows.push(respData.data.slice(i, i + chunkSize));
-      }
-      console.log("permissionRows: ", this.permissionRows);
-    }, (err) => {
-      console.log("Error fetching permissions: ", err);
+    this.apiService.getAllPermissions().subscribe({
+      next: (respData) => {
+        respData.data.map((res: any) => {
+          res.completed = false;
+        });
+        const chunkSize = 4;
+        this.permissionRows = [];
+        for (let i = 0; i < respData.data.length; i += chunkSize) {
+          this.permissionRows.push(respData.data.slice(i, i + chunkSize));
+        }
+        console.log('permissionRows: ', this.permissionRows);
+      },
+      error: (error) => {
+        console.log('Error fetching permissions: ', error);
+      },
     });
+    //   (respData: any) => {
+
+    //   respData.data.map((res: any) => {
+    //     res.completed = false;
+    //   });
+    //   const chunkSize = 4;
+    //   this.permissionRows = [];
+    //   for (let i = 0; i < respData.data.length; i += chunkSize) {
+    //     this.permissionRows.push(respData.data.slice(i, i + chunkSize));
+    //   }
+    //   console.log("permissionRows: ", this.permissionRows);
+    // }, (err) => {
+    //   console.log("Error fetching permissions: ", err);
+    // });
   }
   clearAllPermissions() {
-    this.permissionRows.forEach((row: { completed: boolean; }[]) =>
-      row.forEach((permission: { completed: boolean; }) => (permission.completed = false))
+    this.permissionRows.forEach((row: { completed: boolean }[]) =>
+      row.forEach(
+        (permission: { completed: boolean }) => (permission.completed = false)
+      )
     );
     this.updatePermissionCount();
   }
   updatePermissionCount() {
     this.selectedPermissionsCount = this.permissionRows.reduce(
-      (count: any, row: { filter: (arg0: (permission: { completed: any; }) => any) => { (): any; new(): any; length: any; }; }) =>
-        count + row.filter((permission: { completed: any; }) => permission.completed).length,
+      (
+        count: any,
+        row: {
+          filter: (arg0: (permission: { completed: any }) => any) => {
+            (): any;
+            new (): any;
+            length: any;
+          };
+        }
+      ) =>
+        count +
+        row.filter((permission: { completed: any }) => permission.completed)
+          .length,
       0
     );
   }
@@ -164,8 +208,6 @@ export class AssignRoleComponent {
     if (this.roleForm.invalid || this.roleForm.hasError('notMatching')) {
       return;
     }
-    
-
     const formData = {
       username: this.roleForm.value.username,
       email: this.roleForm.value.email,
@@ -181,9 +223,8 @@ export class AssignRoleComponent {
         : [],
     };
 
-    console.log('Assign Role Data:', formData);
-    this.apiService.assignRoleToUser(formData).subscribe(
-      (respData: any) => {
+    this.apiService.assignRoleToUser(formData).subscribe({
+      next: (response) => {
         Swal.fire({
           title: 'Success!',
           text: 'Role Assigned successfully.',
@@ -193,14 +234,18 @@ export class AssignRoleComponent {
           this.router.navigate(['/ui-components/user-list']);
         });
       },
-      (err: any) => {
+      error: (error) => {
+        const errorMessage =
+          error?.error?.error || // Specific message from API response
+          error?.message || // Fallback to the general error message
+          'There was an error creating the user. Please try again.'; // Default message
         Swal.fire({
           title: 'Error!',
-          text: 'There was an error assigning the role. Please try again.',
+          text: errorMessage,
           icon: 'error',
           confirmButtonText: 'OK',
         });
-      }
-    );
+      },
+    });
   }
 }

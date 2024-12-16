@@ -3,22 +3,43 @@
     <div class="col-lg-4 d-flex align-items-center">
       <mat-card class="cardWithShadow boxed-auth">
         <mat-card-content class="p-32">
-          <div class="or-border m-t-30">sign in with</div>
+          <div class="or-border m-t-30">Sign in with</div>
           <form class="m-t-30" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email Input -->
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Email</mat-label>
-            <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput placeholder="Enter your email"
-              formControlName="email"/>
-              <!-- <mat-error *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-                Please provide a valid email address.
-              </mat-error> -->
+            <mat-form-field
+              appearance="outline"
+              class="w-100"
+              color="primary"
+              [ngClass]="{'mat-form-field-invalid': emailControl?.invalid && emailControl?.touched}"
+            >
+              <input
+                matInput
+                placeholder="Enter your email"
+                formControlName="email"
+                type="email"
+              />
+              <mat-error *ngIf="emailControl?.hasError('required') && emailControl?.touched">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="emailControl?.hasError('email') && emailControl?.touched">
+                Please enter a valid email address
+              </mat-error>
+              <mat-error *ngIf="emailControl?.hasError('pattern') && emailControl?.touched">
+                Invalid email format
+              </mat-error>              
             </mat-form-field>
-            <button mat-flat-button color="primary" class="w-100" type="submit" [disabled]="!loginForm.valid">
+
+            <!-- Submit Button -->
+            <button
+              mat-flat-button
+              color="primary"
+              class="w-100"
+              type="submit"
+              [disabled]="loginForm.invalid"
+            >
               Sign In
             </button>
-            <!-- <a [routerLink]="['/']" mat-flat-button color="primary" class="w-100">
-              Sign In
-            </a> -->
           </form>
         </mat-card-content>
       </mat-card>

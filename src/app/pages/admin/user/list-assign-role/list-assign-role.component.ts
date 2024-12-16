@@ -2,19 +2,31 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import {FormsModule,ReactiveFormsModule,FormBuilder, FormGroup, Validators, UntypedFormBuilder, FormControl } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ApiService } from 'src/app/core/services/api/api.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
-import { RouterLink, RouterLinkActive} from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-// import { ConfirmationDialogComponent } from 'src/app/user/pages/shared/confirmation-dialog/confirmation-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ViewUserPermissionsDialogComponent } from '../view-user-permissions-dialog/view-user-permissions-dialog.component';
 import Swal from 'sweetalert2';
-import { MatIcon } from '@angular/material/icon';
+
+// Define an interface for the user data
+interface UserData {
+  id: number;
+  username: string;
+  email: string;
+  is_active: string;
+  User_Permissions?: any[];
+}
 
 @Component({
   selector: 'app-list-assign-role',
@@ -28,68 +40,126 @@ import { MatIcon } from '@angular/material/icon';
     ReactiveFormsModule,
     CommonModule,
     RouterLink,
-    MatIcon
+    MatCardModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatFormFieldModule
   ],
   templateUrl: './list-assign-role.component.html',
-  styleUrl: './list-assign-role.component.scss'
+  styleUrls: ['./list-assign-role.component.scss']
 })
-export class ListAssignRoleComponent {
-  displayedColumns: string[] = ['id', 'name','email','is_active','view_permission', 'actions'];
-  dataSource!: MatTableDataSource<any>;
+export class ListAssignRoleComponent implements OnInit {
+  // Columns to be displayed in the table
+  displayedColumns: string[] = ['id', 'name', 'email', 'is_active', 'view_permission', 'actions'];
+  
+  // Data source for the table
+  dataSource!: MatTableDataSource<UserData>;
+
+  // View child decorators for paginator and sort
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  resultData: any = [];
+
+  // Search and pagination controls
   search = new FormControl('');
-  filter = new FormControl('');
-  searchOptions: any = '';
-  lastSearchValue: any;
-  loading: any;
-  lastfilterValue: any;
-  filterOptions: any;
-  totalRows: number = 0;
+  totalItems: number = 0;
+  currentPage: number = 0;
   pageSize: number = 10;
-  currentPage: any = 0;
   pageSizeOptions: number[] = [10, 25, 50, 100];
+
+  // Loading and error states
+  loading: boolean = false;
+  errorMessage: string = '';
+
   constructor(
-      private apiService: ApiService,
-      private dialog: MatDialog
-  ) { }
+    private apiService: ApiService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-      this.getRole();
+    // Setup search listener
+    this.setupSearchListener();
+    
+    // Load initial user list
+    this.loadUsers();
   }
 
-  viewPermissions(userPermissions: any) {
-    // Extract the permission names from the data (userPermissions)
-    const permissions = userPermissions.map((permission: { Permission: { permissionName: any; }; }) => permission.Permission.permissionName);
-
-    // Log the extracted data for debugging
-    console.log("view permission data--", permissions);
-
-    // Open the dialog and pass the permissions to the dialog component
-    this.dialog.open(ViewUserPermissionsDialogComponent, {
-        data: permissions
-    });
-}
-
-
-  getRole() {
-      var pageNo = this.currentPage + 1
-      this.apiService.getUserList().subscribe((respData: any) => {
-          // if (respData?.isError == false) {
-          console.log("respData----",respData.data)
-              this.resultData = respData.data
-              this.dataSource = respData.data;
-              this.dataSource.sort = this.sort;
-              this.totalRows = respData.data ? respData.data.length : respData.data;
-          // }
-      }, (err) => {
-        console.log("err----",err)
-          // this.toastrService.showError(err.message, 'Error');
+  // Setup search input listener with debounce
+  setupSearchListener() {
+    this.search.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.currentPage = 0;
+        this.loadUsers();
       });
   }
 
- 
+  // Load users with pagination and optional search
+  loadUsers() {
+    this.loading = true;
+    this.errorMessage = '';
+
+    // Prepare request parameters
+    const params = {
+      page: this.currentPage,
+      limit: this.pageSize,
+      search: this.search.value || ''
+    };
+
+    // Call API to get user list
+    this.apiService.getUserList(params).subscribe({
+      next: (response) => {
+        this.loading = false;
+        
+        // Update datasource
+        this.dataSource = new MatTableDataSource(response.data.items);
+        
+        // Update pagination details
+        this.totalItems = response.data.totalItems;
+        this.currentPage = response.data.currentPage;
+
+        // Setup sorting
+        this.dataSource.sort = this.sort;
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = 'Failed to load users. Please try again.';
+        console.error('Error loading users:', error);
+        
+        // Show error using SweetAlert
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: this.errorMessage
+        });
+      }
+    });
+  }
+
+  // Pagination event handler
+  pageChanged(event: any) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadUsers();
+  }
+
+  // View User Permissions
+  viewPermissions(userPermissions: any) {
+    // Extract permission names
+   console.log("userPermissions-",userPermissions)
+    const permissions = userPermissions.map((permission: { Permission: { permissionName: any; }; }) => 
+      permission.Permission.permissionName
+    );
+
+    // Open dialog to show permissions
+    this.dialog.open(ViewUserPermissionsDialogComponent, { 
+      data: permissions
+    });
+  }
+
+  // Delete User with Confirmation
   deleteRole(id: number) {
     Swal.fire({
       title: 'Are you sure?',
@@ -104,12 +174,8 @@ export class ListAssignRoleComponent {
       if (result.isConfirmed) {
         this.apiService.deleteUser(id).subscribe({
           next: () => {
-            Swal.fire(
-              'Deleted!',
-              'The User has been deleted.',
-              'success'
-            );
-            location.reload();
+            Swal.fire('Deleted!', 'The User has been deleted.', 'success');
+            this.loadUsers(); // Reload the current page after deletion
           },
           error: (error: any) => {
             console.error('Error deleting User:', error);
@@ -123,5 +189,4 @@ export class ListAssignRoleComponent {
       }
     });
   }
-
 }

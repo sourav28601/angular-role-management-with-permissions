@@ -12,108 +12,163 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RouterLink, RouterLinkActive} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 // import { ConfirmationDialogComponent } from 'src/app/user/pages/shared/confirmation-dialog/confirmation-dialog.component';
 import { ViewPermissionsDialogComponent } from '../view-permissions-dialog/view-permissions-dialog.component';
 import Swal from 'sweetalert2';
 import { MatIcon } from '@angular/material/icon';
+import { MatSpinner } from '@angular/material/progress-spinner';
+import { MatLabel } from '@angular/material/form-field';
+import { MatFormField } from '@angular/material/form-field';
+interface RoleData {
+  id: number;
+  name: string;
+  Permissions?: any[];
+}
 
 @Component({
-    selector: 'app-role-list',
-    standalone: true,
-    imports: [
-      MatPaginatorModule,
-      MatSortModule,
-      MatTableModule,
-      MatDialogModule,
-      FormsModule,
-      ReactiveFormsModule,
-      CommonModule,
-      RouterLink,
-      MatCardModule,
-      MatIcon
-    ],
-    templateUrl: './role-list.component.html',
-    styleUrls: []
+  selector: 'app-role-list',
+  standalone: true,
+  imports: [
+    MatPaginatorModule,
+    MatSortModule,
+    MatTableModule,
+    MatDialogModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    RouterLink,
+    MatCardModule,
+    MatIcon,
+    MatSpinner,
+    MatFormField,
+    MatLabel
+    
+  ],
+  templateUrl: './role-list.component.html',
+  styleUrls: []
 })
+export class RoleListComponent implements OnInit {
+  displayedColumns: string[] = ['id', 'name', 'view_permission', 'actions'];
+  dataSource!: MatTableDataSource<RoleData>;
 
-export class RoleListComponent  {
-    displayedColumns: string[] = ['id', 'name','view_permission', 'actions'];
-    dataSource!: MatTableDataSource<any>;
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
-    @ViewChild(MatSort) sort!: MatSort;
-    resultData: any = [];
-    search = new FormControl('');
-    filter = new FormControl('');
-    searchOptions: any = '';
-    lastSearchValue: any;
-    loading: any;
-    lastfilterValue: any;
-    filterOptions: any;
-    totalRows: number = 0;
-    pageSize: number = 10;
-    currentPage: any = 0;
-    pageSizeOptions: number[] = [10, 25, 50, 100];
-    constructor(
-        private apiService: ApiService,
-        private dialog: MatDialog
-    ) { }
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-    ngOnInit(): void {
-        this.getRole();
-    }
+  // Pagination and Search Controls
+  search = new FormControl('');
+  totalItems: number = 0;
+  currentPage: number = 0;
+  pageSize: number = 10;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
+  
+  // Loading and Error States
+  loading: boolean = false;
+  errorMessage: string = '';
 
-    viewPermissions(data:any) {
-        this.dialog.open(ViewPermissionsDialogComponent, { data });   
-    }
+  constructor(
+    private apiService: ApiService, 
+    private dialog: MatDialog
+  ) {}
 
-    getRole() {
-        var pageNo = this.currentPage + 1
-        this.apiService.getRoleList().subscribe((respData: any) => {
-            // if (respData?.isError == false) {
-            console.log("respData----",respData.data)
-                this.resultData = respData.data
-                this.dataSource = new MatTableDataSource(respData.data);
-                this.dataSource.sort = this.sort;
-                this.totalRows = respData.data ? respData.data.length : respData.data;
-            // }
-        }, (err) => {
-          console.log("err----",err)
-            // this.toastrService.showError(err.message, 'Error');
-        });
-    }
+  ngOnInit(): void {
+    this.setupSearchListener();
+    this.loadRoles();
+  }
 
-    deleteRole(id: number) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.apiService.deleteRole(id).subscribe({
-            next: () => {
-              Swal.fire(
-                'Deleted!',
-                'The Role has been deleted.',
-                'success'
-              );
-              location.reload();
-            },
-            error: (error: any) => {
-              console.error('Error deleting Role:', error);
-              Swal.fire(
-                'Error!',
-                'There was an error deleting the Role. Please try again.',
-                'error'
-              );
-            },
-          });
-        }
+  // Setup search input listener
+  setupSearchListener() {
+    this.search.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.currentPage = 0;
+        this.loadRoles();
       });
-    }
+  }
 
+  // Load roles with pagination and optional search
+  loadRoles() {
+    this.loading = true;
+    this.errorMessage = '';
+
+    const params = {
+      page: this.currentPage,
+      limit: this.pageSize,
+      search: this.search.value || ''
+    };
+
+    this.apiService.getRoleList(params).subscribe({
+      next: (response) => {
+        this.loading = false;
+        
+        // Update datasource
+        this.dataSource = new MatTableDataSource(response.data.items);
+        
+        // Update pagination details
+        this.totalItems = response.data.totalItems;
+        this.currentPage = response.data.currentPage;
+
+        // Optional: Setup sorting if needed
+        this.dataSource.sort = this.sort;
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = 'Failed to load roles. Please try again.';
+        console.error('Error loading roles:', error);
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: this.errorMessage
+        });
+      }
+    });
+  }
+
+  // Pagination event handler
+  pageChanged(event: any) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadRoles();
+  }
+
+  // View Permissions Dialog
+  viewPermissions(data: any) {
+    this.dialog.open(ViewPermissionsDialogComponent, {data});
+  }
+
+  // Delete Role with Confirmation
+  deleteRole(id: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.apiService.deleteRole(id).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'The Role has been deleted.', 'success');
+            this.loadRoles(); // Reload the current page after deletion
+          },
+          error: (error: any) => {
+            console.error('Error deleting Role:', error);
+            Swal.fire(
+              'Error!',
+              'There was an error deleting the Role. Please try again.',
+              'error'
+            );
+          },
+        });
+      }
+    });
+  }
 }
+
