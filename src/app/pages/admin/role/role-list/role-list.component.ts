@@ -82,7 +82,6 @@ export class RoleListComponent  {
         });
     }
 
-   
     deleteRole(id: number) {
       Swal.fire({
         title: 'Are you sure?',

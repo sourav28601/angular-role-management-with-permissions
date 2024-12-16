@@ -47,38 +47,13 @@
     />
   </button>
   <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
-    <button mat-menu-item>
-      <mat-icon class="d-flex align-items-center"
-        ><i
-          data-icon="solar:shield-user-line-duotone"
-          class="iconify icon-22"
-        ></i></mat-icon
-      >My Profile
-    </button>
-    <button mat-menu-item>
-      <mat-icon class="d-flex align-items-center"
-        ><i
-          data-icon="solar:user-id-line-duotone"
-          class="iconify icon-22"
-        ></i></mat-icon
-      >My Account
-    </button>
-    <button mat-menu-item>
-      <mat-icon class="d-flex align-items-center"
-        ><i
-          data-icon="solar:checklist-minimalistic-line-duotone"
-          class="iconify icon-22"
-        ></i> </mat-icon
-      >My Task
-    </button>
-
     <div class="p-x-12 m-t-12">
       <a
         [routerLink]="['/authentication/login']"
         mat-stroked-button
         color="primary"
         class="w-100"
-        >Logout</a
+        (click)="logOut()">Logout</a
       >
     </div>
   </mat-menu>

@@ -156,7 +156,7 @@ export class VerifyOtpComponent implements OnInit{
             icon: 'success',
             confirmButtonText: 'OK',
           }).then(() => {
-            this.router.navigate(['/dashboard']); // Redirect after successful verification
+            this.router.navigate(['/ui-components/create-role']); 
           });
         },
         error: (error) => {

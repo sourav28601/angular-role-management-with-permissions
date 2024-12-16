@@ -14,6 +14,9 @@ import { EditRoleComponent } from '../admin/role/edit-role/edit-role.component';
 import { AssignRoleComponent } from '../admin/user/assign-role/assign-role.component';
 import { ListAssignRoleComponent } from '../admin/user/list-assign-role/list-assign-role.component';
 import { EditAssignRoleComponent } from '../admin/user/edit-assign-role/edit-assign-role.component';
+import { AuthGuard } from 'src/app/core/guards/auth/auth.guard';
+import { OuterGuard } from 'src/app/core/guards/outer/outer.guard';
+
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
@@ -44,22 +47,28 @@ export const UiComponentsRoutes: Routes = [
       },
       {
         path: 'create-role',
+        canActivate:[AuthGuard],
         component: CreateRoleComponent,
       },
       {
         path: 'role-list',
+        canActivate:[AuthGuard],
         component: RoleListComponent,
       },
       { path: 'edit-role/:id',
+        canActivate:[AuthGuard],
         component: EditRoleComponent,
       },
       { path: 'assign-role',
+        canActivate:[AuthGuard],
         component: AssignRoleComponent,
       },
       { path: 'user-list',
+        canActivate:[AuthGuard],
         component: ListAssignRoleComponent,
       },
       { path: 'edit-user/:id',
+        canActivate:[AuthGuard],
         component: EditAssignRoleComponent,
       },
       {
