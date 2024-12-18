@@ -37,13 +37,26 @@ export class ApiService {
   getRoles(){
     return this.getApi('admin_role/all');
   }
-  getRoleList(params: {
-    page?: number, 
-    limit?: number, 
-    search?: string
-  } = {}){
-    return this.getApi('admin_role/view_role');
+  addPostOrReview(data:any){
+    return this.postApi('admin_post/add_post',data);
   }
+  add(){
+    return this.getApi('admin_role/all');
+  }
+  // getRoleList(params: {
+  //   page?: number, 
+  //   limit?: number, 
+  //   search?: string
+  // } = {}){
+  //   return this.getApi('admin_role/view_role');
+  // }
+  getRoleList(params: { page?: number; limit?: number; search?: string } = {}) {
+    return this.getApi('admin_role/view_role', params);
+  }
+  getPostOrReviewList(params: { page?: number; limit?: number; search?: string } = {}) {
+    return this.getApi('admin_post/view_post', params);
+  }
+  
   // getRoleList(params: {
   //   page?: number, 
   //   limit?: number, 
@@ -57,13 +70,15 @@ export class ApiService {
   //     }
   //   });
   // }
+
   getUserList(params: {
     page?: number, 
     limit?: number, 
     search?: string
   } = {}){
-    return this.getApi('admin_user/view_user');
+    return this.getApi('admin_user/view_user',params);
   }
+  
   getRoleByID(id:any){
     return this.getApi(`admin_role/view_role/${id}`);
   }
@@ -79,8 +94,19 @@ export class ApiService {
   deleteUser(id:any){
     return this.deleteApi(`admin_user/delete_user/${id}`);
   }
-  getApi(url: string): Observable<any> {
-    return this.http.get(`${environment.baseUrl}${url}`);
+  // getApi(url: string): Observable<any> {
+  //   return this.http.get(`${environment.baseUrl}${url}`);
+  // }
+  getApi(url: string, params: { [key: string]: any } = {}): Observable<any> {
+    let httpParams = new HttpParams();
+    // Append params only if they have values
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        httpParams = httpParams.set(key, params[key]);
+      }
+    }
+    // Make GET request with query parameters
+    return this.http.get(`${environment.baseUrl}${url}`, { params: httpParams });
   }
   postApi(url: any, data: any) {
     return this.http.post(`${environment.baseUrl}${url}`, data);

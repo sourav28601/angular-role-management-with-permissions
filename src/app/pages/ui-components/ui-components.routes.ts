@@ -16,7 +16,7 @@ import { ListAssignRoleComponent } from '../admin/user/list-assign-role/list-ass
 import { EditAssignRoleComponent } from '../admin/user/edit-assign-role/edit-assign-role.component';
 import { AuthGuard } from 'src/app/core/guards/auth/auth.guard';
 import { OuterGuard } from 'src/app/core/guards/outer/outer.guard';
-
+import { PostReviewComponent } from '../admin/post-review/post-review/post-review.component';
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
@@ -70,6 +70,11 @@ export const UiComponentsRoutes: Routes = [
       { path: 'edit-user/:id',
         canActivate:[AuthGuard],
         component: EditAssignRoleComponent,
+      },
+      {
+        path:'post-review',
+        canActivate:[AuthGuard],
+        component: PostReviewComponent,
       },
       {
         path: 'tables',

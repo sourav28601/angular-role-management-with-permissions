@@ -58,9 +58,9 @@ export class RoleListComponent implements OnInit {
   // Pagination and Search Controls
   search = new FormControl('');
   totalItems: number = 0;
-  currentPage: number = 0;
+  currentPage: number = 1;
   pageSize: number = 10;
-  pageSizeOptions: number[] = [10, 25, 50, 100];
+  pageSizeOptions: number[] = [10, 20, 50, 100];
   
   // Loading and Error States
   loading: boolean = false;
@@ -90,35 +90,76 @@ export class RoleListComponent implements OnInit {
   }
 
   // Load roles with pagination and optional search
+  // loadRoles() {
+  //   this.loading = true;
+  //   this.errorMessage = '';
+
+  //   const params = {
+  //     page: this.currentPage,
+  //     limit: this.pageSize,
+  //     search: this.search.value || ''
+  //   };
+  //   // getRoleList(params: { page?: number; limit?: number; search?: string } = {}) {
+  //   //   return this.getApi('admin_role/view_role', params);
+  //   // }
+    
+  //   this.apiService.getRoleList(params).subscribe({
+  //     next: (response) => {
+  //       this.loading = false;
+        
+  //       // Update datasource
+  //       this.dataSource = new MatTableDataSource(response.data.items);
+        
+  //       // Update pagination details
+  //       this.totalItems = response.data.totalItems;
+  //       this.currentPage = response.data.currentPage;
+
+  //       // Optional: Setup sorting if needed
+  //       this.dataSource.sort = this.sort;
+  //     },
+  //     error: (error) => {
+  //       this.loading = false;
+  //       this.errorMessage = 'Failed to load roles. Please try again.';
+  //       console.error('Error loading roles:', error);
+        
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Oops...',
+  //         text: this.errorMessage
+  //       });
+  //     }
+  //   });
+  // }
+  
   loadRoles() {
     this.loading = true;
     this.errorMessage = '';
-
+  
     const params = {
-      page: this.currentPage,
+      page: this.currentPage, // Send 1-based page number to API
       limit: this.pageSize,
-      search: this.search.value || ''
+      search: this.search.value || '' // Include search query if needed
     };
-
+  
     this.apiService.getRoleList(params).subscribe({
       next: (response) => {
         this.loading = false;
-        
-        // Update datasource
+  
+        // Update data source
         this.dataSource = new MatTableDataSource(response.data.items);
-        
+  
         // Update pagination details
         this.totalItems = response.data.totalItems;
         this.currentPage = response.data.currentPage;
-
-        // Optional: Setup sorting if needed
-        this.dataSource.sort = this.sort;
+  
+        // Sync paginator with API response
+        this.paginator.pageIndex = this.currentPage - 1; // 0-based for UI
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = 'Failed to load roles. Please try again.';
         console.error('Error loading roles:', error);
-        
+  
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -127,14 +168,24 @@ export class RoleListComponent implements OnInit {
       }
     });
   }
+  
+  
+  
 
   // Pagination event handler
+  // pageChanged(event: any) {
+  //   this.currentPage = event.pageIndex;
+  //   this.pageSize = event.pageSize;
+  //   this.loadRoles();
+  // }
+
   pageChanged(event: any) {
-    this.currentPage = event.pageIndex;
+    this.currentPage = event.pageIndex + 1; // Adjust to 1-based index for the API
     this.pageSize = event.pageSize;
     this.loadRoles();
   }
-
+  
+  
   // View Permissions Dialog
   viewPermissions(data: any) {
     this.dialog.open(ViewPermissionsDialogComponent, {data});

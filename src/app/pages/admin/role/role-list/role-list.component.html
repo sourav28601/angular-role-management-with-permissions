@@ -101,14 +101,15 @@
 
           <!-- Paginator -->
           <mat-paginator
-            [length]="totalItems"
-            [pageIndex]="currentPage"
-            [pageSize]="pageSize"
-            [pageSizeOptions]="pageSizeOptions"
-            (page)="pageChanged($event)"
-            aria-label="Select page of roles"
-          >
-          </mat-paginator>
+          [length]="totalItems"
+          [pageIndex]="currentPage - 1"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="pageChanged($event)"
+          aria-label="Select page of roles"
+        >
+        </mat-paginator>
+        
         </div>
       </div>
     </div>

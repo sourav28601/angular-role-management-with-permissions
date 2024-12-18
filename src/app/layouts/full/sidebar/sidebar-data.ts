@@ -63,6 +63,11 @@ export const navItems: NavItem[] = [
     iconName: 'solar:file-text-line-duotone',
     route: '/ui-components/user-list',
   },
+  {
+    displayName: 'Posts & Reviews',
+    iconName: 'solar:file-text-line-duotone',
+    route: '/ui-components/post-review',
+  },
   // {
   //   displayName: 'Tables',
   //   iconName: 'solar:tablet-line-duotone',

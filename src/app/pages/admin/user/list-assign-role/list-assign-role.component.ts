@@ -100,35 +100,33 @@ export class ListAssignRoleComponent implements OnInit {
   loadUsers() {
     this.loading = true;
     this.errorMessage = '';
-
+  
     // Prepare request parameters
     const params = {
-      page: this.currentPage,
+      page: this.currentPage + 1, // Convert 0-based to 1-based
       limit: this.pageSize,
       search: this.search.value || ''
     };
-
-    // Call API to get user list
+  
     this.apiService.getUserList(params).subscribe({
       next: (response) => {
         this.loading = false;
-        
+  
         // Update datasource
         this.dataSource = new MatTableDataSource(response.data.items);
-        
-        // Update pagination details
+  
+        // Update pagination
         this.totalItems = response.data.totalItems;
-        this.currentPage = response.data.currentPage;
-
-        // Setup sorting
+        this.currentPage = response.data.currentPage - 1; // Convert back to 0-based
+  
+        // Set sorting reference
         this.dataSource.sort = this.sort;
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = 'Failed to load users. Please try again.';
         console.error('Error loading users:', error);
-        
-        // Show error using SweetAlert
+  
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -137,13 +135,14 @@ export class ListAssignRoleComponent implements OnInit {
       }
     });
   }
-
+  
   // Pagination event handler
   pageChanged(event: any) {
-    this.currentPage = event.pageIndex;
+    this.currentPage = event.pageIndex; // Paginator's pageIndex is 0-based
     this.pageSize = event.pageSize;
     this.loadUsers();
   }
+  
 
   // View User Permissions
   viewPermissions(userPermissions: any) {

@@ -1,0 +1,27 @@
+.form-row {
+  display: flex;
+  gap: 16px; /* Space between input fields */
+}
+
+.half-width {
+  flex: 1; /* Ensures equal space for both fields */
+}
+
+.full-width {
+  width: 100%;
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  margin-right: -24px;
+}
+
+.custom-file-input {
+    margin-top: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  

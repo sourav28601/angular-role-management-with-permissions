@@ -1,0 +1,296 @@
+
+
+<div class="container">
+  <div class="row">
+    <!-- Left Column -->
+    <div class="col-6">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">SUBMIT YOUR POSTS/REVIEWS FOR APPROVAL</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-1">
+          <form [formGroup]="postReviewForm" (ngSubmit)="onSubmit()" autocomplete="off">
+            <div class="Advanced-Attribute mt-0 pt-4">
+              <div class="card-body General-item">
+                <!-- Two Inputs in One Row -->
+                <div class="form-row">
+                  <!-- Type Input -->
+                  <mat-form-field class="half-width" appearance="outline">
+                    <mat-label>Type</mat-label>
+                    <mat-select formControlName="type">
+                      <mat-option [value]="'Post'">Post</mat-option>
+                      <mat-option [value]="'Review'">Review</mat-option>
+                      <mat-option [value]="'Testimonial'">Testimonial</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="postReviewForm.get('type')?.hasError('required')">
+                      Type is required
+                    </mat-error>
+                  </mat-form-field>
+          
+                  <!-- Channel -->
+                  <mat-form-field class="half-width" appearance="outline">
+                    <mat-label>Channel</mat-label>
+                    <mat-select formControlName="channel">
+                      <mat-option [value]="'FB - Nifty Thrifty'">FB - Nifty Thrifty</mat-option>
+                      <mat-option [value]="'Capterra'">Capterra</mat-option>
+                      <mat-option [value]="'SoftwareAdvice'">SoftwareAdvice</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="postReviewForm.get('channel')?.hasError('required')">
+                      Channel is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+          
+                <!-- Channel Link and Requested by Adit in One Row -->
+                <div class="form-row">
+                  <!-- Channel Link Input -->
+                  <mat-form-field class="half-width" appearance="outline">
+                    <mat-label>Channel Link</mat-label>
+                    <input matInput type="url" placeholder="Enter channel link" formControlName="channel_link" />
+                    <mat-error *ngIf="postReviewForm.get('channel_link')?.hasError('required')">
+                      Channel link is required
+                    </mat-error>
+                    <mat-error *ngIf="postReviewForm.get('channel_link')?.hasError('pattern')">
+                      Invalid channel link format
+                    </mat-error>
+                  </mat-form-field>
+          
+                  <!-- Requested by Adit -->
+                  <mat-form-field class="half-width" appearance="outline">
+                    <mat-label>Requested by Adit</mat-label>
+                    <mat-select formControlName="requested_by_adit">
+                      <mat-option [value]="true">Yes</mat-option>
+                      <mat-option [value]="false">No</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="postReviewForm.get('requested_by_adit')?.hasError('required')">
+                      Requested by Adit is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+          
+                <!-- Comments and File Upload in One Row -->
+                <div class="form-row">
+                  <!-- Comments Input -->
+                  <mat-form-field class="half-width" appearance="outline">
+                    <mat-label>Comments</mat-label>
+                    <textarea matInput rows="3" placeholder="Enter comments" formControlName="comments"></textarea>
+                    <mat-error *ngIf="postReviewForm.get('comments')?.hasError('maxlength')">
+                      Comments must be less than 500 characters
+                    </mat-error>
+                  </mat-form-field>
+          
+                  <!-- File Upload -->
+                  <div class="file-upload-container half-width">
+                    <label for="file-upload" class="file-upload-label">Upload Screenshot / Video</label>
+                    <input
+                      type="file"
+                      id="file-upload"
+                      (change)="onFileChange($event)"
+                      accept="image/*,video/*"
+                      (blur)="postReviewForm.get('media_path')?.markAsTouched()"
+                      style="display: block; margin-top: 8px;"
+                      formControlName="media_path"
+                    />
+                    <mat-error *ngIf="postReviewForm.get('media_path')?.hasError('required') && postReviewForm.get('media_path')?.touched">
+                      File upload is required
+                    </mat-error>
+                  </div>                  
+                </div>
+              </div>
+            </div>
+          
+            <!-- Save Button -->
+            <div class="save" style="margin-top: 20px;">
+              <button type="submit" mat-raised-button color="accent" [disabled]="postReviewForm.invalid">
+                Save
+              </button>
+            </div>
+          </form>
+          
+          
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- Right Column -->
+    <div class="col-6">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">HOW DOES POSTS & REVIEWS WORK</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-1">
+          <p>
+            <b>Step 1:</b> Leave a post or review on one of the channels or
+            websites mentioned in the Channel option.
+          </p>
+          <p>
+            <b>Step 2:</b> Take a screenshot and submit your post or review by
+            uploading it here.
+          </p>
+          <p>
+            <b>Step 3:</b> Adit will review your submission and, if approved,
+            you will get rewarded.
+          </p>
+          <p>
+            <b>Additional Note:</b> Sometimes Adit will request a post or demo
+            on a particular channel. Such submissions will fetch you twice the
+            points.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>OPEN REQUESTS FROM ADIT ({{ totalItems }})</mat-card-title>
+      </mat-card-header>
+      <div class="table-responsive" *ngIf="!loading">
+        <table mat-table [dataSource]="dataSource1" matSort>
+          <!-- ID Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>DATE</th>
+            <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'dd MMM yyyy' }}</td>
+          </ng-container>          
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>TYPE</th>
+            <td mat-cell *matCellDef="let row">{{ row.type }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="channel">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>CHANNEL</th>
+            <td mat-cell *matCellDef="let row">{{ row.channel }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="requested_by_adit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>REQUEST DETAILS</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.requested_by_adit ? 'YES' : 'NO' }}
+            </td>
+          </ng-container>
+          
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Take Actions</th>
+            <td mat-cell *matCellDef="let row" class="center-cell">
+              <!-- Submit Button -->
+              <button 
+                mat-raised-button 
+                style="background-color: #4caf50; color: white; cursor: pointer;"
+                (click)="viewPostOrReview(row)">
+                Submit
+              </button>
+            </td>
+          </ng-container>
+          
+          <!-- Table Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns1"></tr>
+
+          <!-- No Data Row -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No data matching the filter</td>
+          </tr>
+        </table>
+
+        <!-- Paginator -->
+        <!-- <mat-paginator
+        [length]="totalItems"
+        [pageIndex]="currentPage - 1"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="pageChanged($event)"
+        aria-label="Select page of roles"
+      >
+      </mat-paginator> -->
+      
+      </div>
+    </mat-card>
+  </div>
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>ALL POSTS & REVIEWS SUBMITTED ({{ totalItems }})</mat-card-title>
+      </mat-card-header>
+      <div class="table-responsive" *ngIf="!loading">
+        <table mat-table [dataSource]="dataSource2" matSort>
+          <!-- ID Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>DATE</th>
+            <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'dd MMM yyyy' }}</td>
+          </ng-container>          
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>TYPE</th>
+            <td mat-cell *matCellDef="let row">{{ row.type }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="channel">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>CHANNEL</th>
+            <td mat-cell *matCellDef="let row">{{ row.channel }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="requested_by_adit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>REQUESTED</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.requested_by_adit ? 'YES' : 'NO' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="channel_link">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>LINK</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.channel_link}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="comments">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>COMMENTS</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.comments }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>STATUS</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.status}}
+            </td>
+          </ng-container>
+          
+          <!-- Table Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns2"></tr>
+
+          <!-- No Data Row -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No data matching the filter</td>
+          </tr>
+        </table>
+
+        <!-- Paginator -->
+        <!-- <mat-paginator
+        [length]="totalItems"
+        [pageIndex]="currentPage - 1"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="pageChanged($event)"
+        aria-label="Select page of roles"
+      >
+      </mat-paginator> -->
+      
+      </div>
+    </mat-card>
+  </div>
+  </div>
+</div>
+
+
