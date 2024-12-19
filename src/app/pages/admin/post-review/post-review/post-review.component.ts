@@ -133,8 +133,7 @@ export class PostReviewComponent {
 viewPostOrReview(row: any) {
   console.log("row data",row)
   this.dialog.open(ViewPostReviewDetailComponent, {
-    data: row,
-    width: '600px'
+    data: row
   });
 }
   onSubmit() {

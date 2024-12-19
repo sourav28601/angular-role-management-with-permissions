@@ -1,68 +1,54 @@
 <div class="dialog-container">
-    <div class="dialog-header">
-      <h2 mat-dialog-title>Post Review Details</h2>
-      <button mat-icon-button (click)="onClose()">
-        <i class="fa fa-window-close"></i>
-      </button>
-    </div>
-  
-    <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="form-container">
-        <div mat-dialog-content class="form-content">
-          <!-- Form Fields Container -->
-          <div class="form-fields">
-            <!-- Type Field -->
-            <mat-form-field appearance="outline">
-              <mat-label>Type</mat-label>
-              <input matInput formControlName="type">
-            </mat-form-field>
-      
-            <!-- Channel Field -->
-            <mat-form-field appearance="outline">
-              <mat-label>Channel</mat-label>
-              <input matInput formControlName="channel">
-            </mat-form-field>
-      
-            <!-- Status Field -->
-            <mat-form-field appearance="outline">
-              <mat-label>Status</mat-label>
-              <mat-select formControlName="status">
-                <mat-option value="pending">Pending</mat-option>
-                <mat-option value="approved">Approved</mat-option>
-                <mat-option value="rejected">Rejected</mat-option>
-              </mat-select>
-            </mat-form-field>
-      
-            <!-- Remarks Field -->
-            <mat-form-field appearance="outline">
-              <mat-label>Remarks</mat-label>
-              <textarea matInput formControlName="remarks" rows="4"></textarea>
-            </mat-form-field>
-      
-            <!-- Media File Input -->
-            <div class="file-upload-section">
-              <label for="mediaFile" class="file-label">Media File:</label>
-              <input type="file" 
-                     id="mediaFile" 
-                     class="file-input" 
-                    
-                     accept="image/*,video/*">
-              
-              <!-- Media Preview Container -->
-              <!-- <div class="media-preview" *ngIf="mediaPreview">
-                <img *ngIf="isImage" [src]="mediaPreview" alt="Preview" class="preview-image">
-                <video *ngIf="isVideo" controls class="preview-video">
-                  <source [src]="mediaPreview" type="video/mp4">
-                  Your browser does not support the video tag.
-                </video>
-              </div> -->
-            </div>
-          </div>
-        </div>
-      
-        <!-- Action Buttons -->
-        <div mat-dialog-actions class="action-buttons">
-          <button mat-button (click)="onClose()">Cancel</button>
-          <button mat-raised-button color="primary" type="submit">Submit</button>
-        </div>
-      </form>
+  <div class="dialog-header">
+    <h2 mat-dialog-title style="text-align: center;">Post Review Details</h2>
   </div>
+
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="form-container">
+    <div mat-dialog-content class="form-content">
+      <!-- Form Fields Container -->
+      <div class="form-fields">
+        <!-- Type and Channel in One Row -->
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline" style="margin-left: 20px;margin-right: 20px;">
+            <mat-label>Type</mat-label>
+            <input matInput formControlName="type">
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline" style="margin-left: 20px;margin-right: 20px;">
+            <mat-label>Channel</mat-label>
+            <input matInput formControlName="channel">
+          </mat-form-field>
+        </div>
+
+        <!-- Status Field -->
+        <mat-form-field class="full-width" appearance="outline" style="margin-left: 20px; margin-right: 20px;">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="pending">Pending</mat-option>
+            <mat-option value="approved">Approved</mat-option>
+            <mat-option value="rejected">Rejected</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Remarks Field -->
+        <mat-form-field class="full-width" appearance="outline" style="margin-left: 20px;margin-right: 20px;">
+          <mat-label>Remarks</mat-label>
+          <textarea matInput formControlName="remarks" rows="4"></textarea>
+        </mat-form-field>
+
+        <!-- Media File Input -->
+        <div class="file-upload-section" style="margin-left: 20px;margin-right: 20px;">
+          <label for="mediaFile" class="file-label">Media File:</label>
+          <input type="file" id="mediaFile" class="file-input" accept="image/*,video/*">
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div mat-dialog-actions class="action-buttons" style="margin-top: 20px;display: flex;justify-content: center;">
+      <button mat-button class="cancel-button" (click)="onClose()"
+        style="background-color: red;margin-right: 10px;">Cancel</button>
+      <button mat-raised-button class="submit-button" color="primary" type="submit">Submit</button>
+    </div>
+  </form>
+</div>
